@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Catálogo Perú Pacific Food</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<style>
+/* Gilroy: si subes los archivos a la carpeta fonts/, se usan; si no, se usa Outfit (muy parecida). */
+@font-face{font-family:"Gilroy-Bold";src:local("Gilroy-Bold"),url("fonts/Gilroy-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Gilroy-Medium";src:local("Gilroy-Medium"),url("fonts/Gilroy-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+
+/* Layout: barra con logo y carrito → banner (texto azul + foto) → buscador → tarjetas de categoría → grilla de productos (4 col.) → carrito en panel lateral / hoja inferior.
+   Diseño de un solo tema claro, fiel a la marca PPF. */
+:root{
+  color-scheme:light;
+  --azul:#11438C; --azul-oscuro:#0C2F65; --azul-acento:#4FAEFF; --azul-logo:#126b97;
+  --fondo:#f5f8fc; --blanco:#ffffff; --tinta:#0f1b2d; --gris:#5f6b7a; --borde:#dfe7f1; --borde-fuerte:#c9d7e8;
+  --hielo:#eaf3fc; --verde-wa:#1f9d57; --rojo:#c8412c;
+  --sombra:0 8px 24px rgba(12,47,101,.10);
+  --font-heading:"Gilroy-Bold","Gilroy-Heavy","Gilroy-ExtraBold","Gilroy","Outfit",system-ui,sans-serif;
+  --font-body:"Gilroy-Medium","Gilroy-Regular","Gilroy","Outfit",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--font-body);font-size:15px;line-height:1.5;font-weight:500}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--azul-acento);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px}
+h1,h2,h3{font-family:var(--font-heading);font-weight:700}
+
+/* Barra superior */
+.topbar{background:var(--azul-oscuro);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:30}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.logo{height:46px;width:auto;display:block}
+.top-right{display:flex;align-items:center;gap:14px}
+.advisor{font-size:13.5px;opacity:.9;white-space:nowrap}
+.cartbtn{display:inline-flex;align-items:center;gap:8px;background:var(--azul-logo);color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.cartbtn:hover{background:#0f5e86}
+.cartbtn svg{width:20px;height:20px}
+.cartbtn .count{background:var(--azul-acento);color:var(--azul-oscuro);border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:12.5px;padding:0 6px}
+@media (max-width:520px){.advisor{display:none}.cartbtn .lbl{display:none}.logo{height:38px}}
+
+/* Banner */
+.hero{margin-top:18px;display:grid;grid-template-columns:1fr 1.25fr;border-radius:16px;overflow:hidden;background:var(--azul-oscuro);box-shadow:var(--sombra)}
+.hero-txt{background:linear-gradient(120deg,var(--azul-oscuro) 0%,#10397a 60%,var(--azul) 100%);color:#fff;padding:32px 36px;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:0}
+.eyebrow{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0}
+.hero h1{margin:0;font-size:clamp(32px,4.4vw,50px);line-height:1.02;letter-spacing:-.01em;text-wrap:balance}
+.hero h1 span{color:var(--azul-acento);display:block}
+.hero p.lead{margin:0;max-width:46ch;opacity:.92}
+.hero-cta{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:6px}
+.btn-primary{background:var(--azul-logo);color:#fff;text-decoration:none;border:0;border-radius:10px;padding:14px 20px;font-weight:600;font-size:16px;cursor:pointer}
+.btn-primary:hover{background:#0f5e86}
+.delivery{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.delivery svg{width:20px;height:20px;fill:currentColor}
+.hero-img{min-height:250px;background:url("img/hero.jpg") center/cover no-repeat #1a1a1a}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .hero-img{order:-1;min-height:170px}
+  .hero-txt{padding:24px 20px}
+}
+
+/* Buscador */
+.searchbar{margin-top:22px;display:flex;align-items:stretch;background:var(--blanco);border:1px solid var(--borde-fuerte);border-radius:12px;box-shadow:0 2px 10px rgba(79,174,255,.12);overflow:hidden;max-width:620px}
+.searchbar input{flex:1;min-width:0;border:0;padding:13px 16px;background:transparent;outline:none}
+.searchbar input::placeholder{color:#8a96a6}
+.searchbar:focus-within{border-color:var(--azul-acento)}
+.searchbar button{border:0;border-left:1px solid var(--borde);background:transparent;padding:0 16px;color:var(--azul-logo);cursor:pointer;display:grid;place-items:center}
+.searchbar svg{width:20px;height:20px}
+
+/* Categorías */
+.cats{margin-top:18px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:12px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.catcard{background:var(--blanco);border:1px solid var(--borde);border-radius:14px;padding:18px 12px 14px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;text-align:center;font-weight:700;font-family:var(--font-heading);font-size:14px;line-height:1.25;color:var(--tinta);transition:box-shadow .15s,border-color .15s}
+.catcard svg{width:40px;height:40px;stroke:var(--azul);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.catcard:hover{box-shadow:var(--sombra)}
+.catcard[aria-pressed="true"]{border-color:var(--azul);box-shadow:var(--sombra);background:var(--hielo)}
+
+/* Productos */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 0 14px;flex-wrap:wrap;scroll-margin-top:80px}
+.sec-head h2{margin:0;font-size:24px;color:var(--azul-oscuro)}
+.sec-head span{color:var(--gris);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+@media (max-width:1060px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+.note{grid-column:1/-1;color:var(--gris);font-size:14px;margin:0;text-align:center;padding:24px 0}
+
+.card{background:var(--blanco);border:1px solid var(--borde);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.ph{position:relative;aspect-ratio:4/3;max-width:100%;background:linear-gradient(145deg,var(--hielo),#d7e8f8);display:grid;place-items:center;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph svg{width:64px;height:64px;stroke:var(--azul);opacity:.45;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;top:10px;left:10px;background:var(--azul);color:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px}
+.badge.out{left:auto;right:10px;background:var(--tinta)}
+.cb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.cb h3{margin:0;font-size:16px;line-height:1.25;color:var(--tinta);min-height:2.5em}
+.pres{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--gris)}
+.pres select{border:1px solid var(--borde-fuerte);border-radius:8px;padding:6px 8px;background:var(--blanco);font-weight:600;color:var(--tinta);max-width:62%;min-width:0}
+.pres b{color:var(--tinta)}
+.price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:auto}
+.price strong{font-family:var(--font-heading);font-size:21px;color:var(--azul);font-variant-numeric:tabular-nums}
+.price s{color:#9aa5b3;font-size:14px;font-weight:600}
+.act{display:flex;gap:8px;align-items:stretch}
+.qty{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--borde-fuerte);border-radius:10px;overflow:hidden;min-width:0}
+.qty button{border:0;background:transparent;width:36px;height:38px;font-size:18px;font-weight:700;color:var(--azul-oscuro);cursor:pointer;flex:none}
+.qty button:hover{background:var(--hielo)}
+.qty output{font-weight:700;font-variant-numeric:tabular-nums;font-size:16px}
+.addbtn{flex:none;width:58px;border:0;border-radius:10px;background:var(--azul-logo);color:#fff;display:grid;place-items:center;cursor:pointer}
+.addbtn:hover{background:#0f5e86}
+.addbtn:disabled{background:var(--borde);color:var(--gris);cursor:not-allowed}
+.addbtn svg{width:22px;height:22px}
+@media (max-width:760px){.pres{flex-direction:column;align-items:stretch;gap:4px}.pres select{max-width:100%;width:100%}.cb h3{font-size:15px}}
+@media (max-width:420px){.cb{padding:12px}.qty button{width:30px}.addbtn{width:46px}.price strong{font-size:18px}}
+
+/* Carrito */
+.scrim{position:fixed;inset:0;background:rgba(12,47,101,.45);z-index:40}
+.cart{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--blanco);z-index:50;display:flex;flex-direction:column;box-shadow:-10px 0 30px rgba(12,47,101,.2);transform:translateX(105%);transition:transform .25s ease;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden}
+.cart.open{transform:none;visibility:visible}
+@media (max-width:600px){.cart{top:auto;width:100%;max-height:92vh;border-radius:18px 18px 0 0;transform:translateY(105%)}}
+.cart-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--borde);background:var(--azul-oscuro);color:#fff}
+@media (max-width:600px){.cart-head{border-radius:18px 18px 0 0}}
+.cart-head h2{margin:0;font-size:20px}
+.close{border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:#fff}
+.cart-body{overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px;flex:1}
+.empty{color:var(--gris);text-align:center;padding:12px 0;margin:0}
+.line{display:grid;grid-template-columns:52px 1fr auto;gap:4px 12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--borde)}
+.line .thumb{grid-row:span 2;width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--hielo)}
+.line .n{font-weight:700;min-width:0;font-size:14px;line-height:1.3}
+.line .v{color:var(--gris);font-size:12.5px;font-weight:500}
+.line .s{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;color:var(--azul)}
+.line .qty{grid-column:2/4;justify-self:start;flex:none;width:118px}
+.line .qty button{height:30px;width:32px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px}
+legend{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);font-weight:700;margin-bottom:8px}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--borde-fuerte);border-radius:9px;background:var(--fondo)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.totals{display:grid;gap:4px;font-variant-numeric:tabular-nums}
+.totals div{display:flex;justify-content:space-between}
+.totals .grand{font-family:var(--font-heading);font-size:22px;color:var(--azul-oscuro);padding-top:8px;border-top:1px solid var(--borde);margin-top:4px}
+.cart-foot{padding:14px 20px 18px;border-top:1px solid var(--borde);display:grid;gap:8px}
+.wa{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--verde-wa);color:#fff;text-decoration:none;font-weight:700;border-radius:12px;padding:14px;font-size:16px}
+.wa[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.wa svg{width:22px;height:22px;fill:currentColor}
+.hint{font-size:12.5px;color:var(--gris);text-align:center;margin:0}
+.err{color:var(--rojo);font-size:13px;margin:0;text-align:center;font-weight:600}
+
+/* Botón flotante (celular) y aviso */
+.fab{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--azul-oscuro);color:#fff;border:0;border-radius:14px;padding:14px 18px;font-weight:700;box-shadow:0 10px 24px rgba(12,47,101,.35);cursor:pointer}
+@media (max-width:760px){.fab.show{display:flex}}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:60;box-shadow:var(--sombra);max-width:calc(100% - 32px);text-align:center}
+footer{color:var(--gris);font-size:12.5px;padding-block:28px 100px;text-align:center}
+@media (prefers-reduced-motion: reduce){.cart{transition:none}}
+</style>
+
+</head>
+<body style="margin:0">
+<header class="topbar">
+  <div class="wrap">
+    <img class="logo" src="img/logo.svg" alt="Perú Pacific Food">
+    <div class="top-right">
+      <span class="advisor" id="advisorTag" hidden></span>
+      <button class="cartbtn" id="openCart" type="button" aria-label="Ver mi pedido">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h2.6l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2l1.6-7.3H6"/></svg>
+        <span class="lbl">Mi pedido</span><span class="count" id="count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-label="Perú Pacific Food">
+    <div class="hero-txt">
+      <p class="eyebrow">Pescados y mariscos premium</p>
+      <h1>Directo del mar <span>a tu mesa</span></h1>
+      <p class="lead">Productos frescos y congelados de la más alta calidad, seleccionados para ti.</p>
+      <div class="hero-cta">
+        <a class="btn-primary" href="#productos" id="goShop">Comprar ahora</a>
+        <span class="delivery"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h9A1.5 1.5 0 0 1 15 5.5V7h2.6a1.5 1.5 0 0 1 1.2.6l2.9 3.8c.2.3.3.6.3.9V16a1 1 0 0 1-1 1h-1.1a2.9 2.9 0 0 1-5.8 0H9.9a2.9 2.9 0 0 1-5.8 0H4a1 1 0 0 1-1-1V5.5ZM7 18.3a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm10 0a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6ZM15 8.6V11h4.6l-1.8-2.4H15Z"/></svg>Delivery en todo Lima y Callao</span>
+      </div>
+    </div>
+    <div class="hero-img" role="img" aria-label="Filetes de salmón sobre hielo"></div>
+  </section>
+
+  <form class="searchbar" id="searchForm" role="search">
+    <input id="q" type="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+    <button type="submit" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.6-4.6"/></svg></button>
+  </form>
+
+  <nav class="cats" id="cats" aria-label="Categorías"></nav>
+
+  <div class="sec-head" id="productos"><h2 id="secTitle">Todos los productos</h2><span id="secCount"></span></div>
+  <section class="grid" id="grid" aria-label="Productos"></section>
+</main>
+
+<footer class="wrap">Delivery a todos los distritos de Lima y Callao (provincias a coordinar). Precios en soles (S/), incluyen IGV. Stock y precio final se confirman por WhatsApp.<br>Inversiones Barco Azul E.I.R.L.</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="cart" id="cart" aria-label="Tu pedido">
+  <div class="cart-head"><h2>Tu pedido</h2><button class="close" id="closeCart" type="button" aria-label="Cerrar pedido">×</button></div>
+  <div class="cart-body">
+    <div id="lines"></div>
+    <form id="form" autocomplete="on">
+      <fieldset>
+        <legend>Datos de entrega</legend>
+        <div class="field" id="asesoraField"><label for="asesora">¿Quién te atiende?</label><select id="asesora"></select></div>
+        <div class="field"><label for="nombre">Nombre</label><input id="nombre" required placeholder="Ej. Ana Torres"></div>
+        <div class="field"><label for="zona">Distrito</label><input id="zona" list="distritos" placeholder="Escribe o elige tu distrito" autocomplete="address-level2"><datalist id="distritos"></datalist></div>
+        <div class="row2">
+          <div class="field"><label for="entrega">Entrega</label><select id="entrega"><option>Delivery</option><option>Recojo en almacén</option></select></div>
+          <div class="field"><label for="fecha">Fecha</label><input id="fecha" type="date"></div>
+        </div>
+        <div class="field"><label for="direccion">Dirección / referencia</label><input id="direccion" placeholder="Av. Pardo 123, dpto 402"></div>
+        <div class="field"><label for="pago">Pago</label><select id="pago"><option>Yape / Plin</option><option>Transferencia</option><option>Efectivo contra entrega</option><option>Tarjeta (POS)</option></select></div>
+        <div class="field"><label for="nota">Comentarios</label><textarea id="nota" rows="2" placeholder="Ej. porcionar el salmón en 4"></textarea></div>
+      </fieldset>
+    </form>
+    <div class="totals" id="totals"></div>
+  </div>
+  <div class="cart-foot">
+    <p class="err" id="err" hidden></p>
+    <a class="wa" id="send" href="#" target="_blank" rel="noopener" aria-disabled="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg>
+      Enviar pedido por WhatsApp
+    </a>
+    <p class="hint" id="hint">Se abre WhatsApp con tu pedido escrito. Solo presiona enviar.</p>
+  </div>
+</aside>
+
+<button class="fab" id="fab" type="button"><span>Ver mi pedido (<span id="fabCount">0</span>)</span><span id="fabTotal">S/ 0.00</span></button>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+/* ========= CONFIGURACIÓN: edita aquí ========= */
+// Asesoras: cada una comparte su propio enlace y los pedidos le llegan a su WhatsApp.
+//   Jeny:   .../?asesora=jeny     Yurico: .../?asesora=yurico     Oscar: .../?asesora=oscar
+//   (también funciona con #jeny, #yurico, #oscar al final del enlace)
+// Número con código de país, sin +, sin espacios.
+const ASESORAS = {
+  oscar:  { nombre: "Oscar",  tel: "51954781474" },
+  yurico: { nombre: "Yurico", tel: "51946541722" },
+  jeny:   { nombre: "Jeny",   tel: "51947181213" },
+};
+const ASESORA_GENERAL = "oscar"; // recibe los pedidos de clientes que llegan sin enlace de asesora
+const PEDIDO_MINIMO = 80;        // S/
+
+// Se acepta CUALQUIER distrito (también provincias). La lista solo sugiere al escribir.
+// Si el distrito tiene tarifa aquí, se suma al total; si no, el delivery queda "por confirmar".
+const TARIFAS = { // distrito: costo de delivery en S/ (ejemplos, edítalos)
+  "Miraflores":10, "San Isidro":10, "Barranco":10, "Surquillo":10, "Santiago de Surco":12, "San Borja":12,
+  "La Molina":15, "Lince":12, "Jesús María":12, "Magdalena del Mar":12, "Pueblo Libre":12, "San Miguel":12,
+  "Chorrillos":15, "Lima":12, "Breña":12, "La Victoria":12, "San Luis":12, "Ate":18, "Los Olivos":18,
+};
+const DISTRITOS = ["Ancón","Ate","Barranco","Breña","Carabayllo","Chaclacayo","Chorrillos","Cieneguilla","Comas","El Agustino","Independencia","Jesús María","La Molina","La Victoria","Lima","Lince","Los Olivos","Lurigancho-Chosica","Lurín","Magdalena del Mar","Miraflores","Pachacámac","Pucusana","Pueblo Libre","Puente Piedra","Punta Hermosa","Punta Negra","Rímac","San Bartolo","San Borja","San Isidro","San Juan de Lurigancho","San Juan de Miraflores","San Luis","San Martín de Porres","San Miguel","Santa Anita","Santa María del Mar","Santa Rosa","Santiago de Surco","Surquillo","Villa El Salvador","Villa María del Triunfo","Callao","Bellavista","Carmen de la Legua-Reynoso","La Perla","La Punta","Mi Perú","Ventanilla"];
+
+// PRECIOS DESDE GOOGLE SHEETS (sincronizada con Odoo):
+// pega aquí el enlace CSV de la hoja publicada (Archivo → Compartir → Publicar en la web → CSV).
+// Si lo dejas vacío, o la hoja no carga, se usa la lista de abajo.
+const SHEET_CSV_URL = "";
+
+// Productos de respaldo.
+// id, n: nombre, c: categoría, f: foto (opcional), b: etiqueta (opcional, ej. "¡Oferta!"), d: palabras para la búsqueda
+// v: presentaciones → [presentación, precio, agotado (true/false), precio anterior (opcional)]
+let PRODUCTOS = [
+  {id:"langostino", n:"Colas de Langostinos peladas", c:"Pescados y Mariscos", f:"img/langostino.jpg", d:"Langostino pelado", v:[["500gr / 16/20",71],["1 kg / 16/20",138]]},
+  {id:"salmon", n:"Filete de Salmón", c:"Pescados y Mariscos", f:"img/salmon.jpg", d:"Salmón porciones", v:[["500 g",39.9],["1 kg",77.9]]},
+  {id:"corvina", n:"Filete de Corvina sin Piel", c:"Pescados y Mariscos", f:"img/corvina.jpg", b:"¡Oferta!", d:"Corvina pescado blanco", v:[["1 kg",74.5,false,89]]},
+  {id:"trucha", n:"Filete de Trucha Asalmonada", c:"Pescados y Mariscos", f:"img/trucha.jpg", d:"Trucha", v:[["500 g",45.9],["1 kg",89.9]]},
+  {id:"mero", n:"Filete de Mero", c:"Pescados y Mariscos", f:"img/mero.jpg", d:"Mero pescado blanco", v:[["500 g",49.9],["1 kg",97.9]]},
+  {id:"mix", n:"Mix de Mariscos", c:"Pescados y Mariscos", d:"Pota langostino calamar choro", v:[["500 g",61],["1 kg",120]]},
+  {id:"carpaccio", n:"Carpaccio de Salmón x 200gr", c:"Casi Listos y Piqueos", d:"Salmón láminas", v:[["200 g",39.5]]},
+  {id:"panko", n:"Langostinos al panko con salsa de maracuyá", c:"Casi Listos y Piqueos", d:"Langostino apanado", v:[["Paquete",74.5]]},
+  {id:"brochetas", n:"Brochetas de mariscos x 5 unidades", c:"Casi Listos y Piqueos", d:"Brochetas parrilla", v:[["5 und",65]]},
+  {id:"vacio", n:"Pack Vacío Angus/Flap Meat USA", c:"Carnes y Parrillas", d:"Carne res parrilla", v:[["Pack",256]]},
+  {id:"cuadril", n:"Pack Colita de Cuadril Angus USA", c:"Carnes y Parrillas", d:"Carne res horno", v:[["Pack",219]]},
+  {id:"coronita", n:"Six Pack Cerveza Coronita x 210ml", c:"Vinos, Cervezas y Agua", d:"Cerveza Corona", v:[["6 und",25.5]]},
+];
+/* ============================================ */
+
+const $ = s => document.querySelector(s);
+const norm = t => String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+const fmt = n => "S/ " + Number(n).toFixed(2);
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// Íconos de categoría (línea, estilo de la web)
+const ICONOS = {
+  "pescados y mariscos": '<path d="M3 12c3-4.5 7-6 11-6 3 0 5 2 7 6-2 4-4 6-7 6-4 0-8-1.5-11-6Z"/><path d="M3 12c-.6-1.6-.6-3.4 0-5M3 12c-.6 1.6-.6 3.4 0 5"/><circle cx="16" cy="11" r=".8"/><path d="M10 9.5c.8 1.5.8 3.5 0 5"/>',
+  "carnes y parrillas": '<path d="M5.5 15.5C3 13 4 7.5 8.5 5.5S18 4 19.5 8s-1 9-6 10.5c-3.2 1-6.3-.3-8-3Z"/><path d="M10 14c1.5.3 3-.3 3.8-1.5M9 11.5c1-.2 2-.8 2.5-1.8"/>',
+  "casi listos y piqueos": '<path d="M3 11h18a9 9 0 0 1-18 0Z"/><path d="M8 8.5c.5-1 1.5-1 2 0M12 8c.5-1 1.5-1 2 0M15.5 8.8c.4-.8 1.2-.8 1.6 0M6.5 9c.3-.6 1-.6 1.3 0"/>',
+  "embutidos y quesos": '<path d="M12 3.5 20.5 9.5 17.5 20h-11L3.5 9.5Z"/><circle cx="10" cy="10" r="1.3"/><circle cx="14.5" cy="13.5" r="1.6"/><circle cx="9.5" cy="15.5" r="1"/>',
+  "salsas, aceites y condimentos": '<path d="M7 3h2v3l1 2v13H6V8l1-2Z"/><path d="M15 3h2v3l1 2v13h-4V8l1-2Z"/>',
+  "vinos, cervezas y agua": '<path d="M6.5 3h2v4.5l1.3 2V21H5.2V9.5l1.3-2Z"/><path d="M14.5 5h3v2.5l1.3 1.5V21h-5.6V9l1.3-1.5Z"/><path d="M13.2 13h5.6"/>',
+  "otros": '<path d="M4 7h16v13H4Z"/><path d="M3 4h18v3H3ZM9.5 11h5"/>',
+};
+const CATS_BASE = ["Pescados y Mariscos","Carnes y Parrillas","Casi Listos y Piqueos","Embutidos y Quesos","Salsas, Aceites y Condimentos","Vinos, Cervezas y Agua"];
+const icono = c => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS[norm(c)] || ICONOS.otros}</svg>`;
+const CART_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h2.6l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2l1.6-7.3H6"/><path d="M11 9.5h5M13.5 7v5"/></svg>';
+
+// Asesora del enlace (?asesora=jeny o #jeny); si no hay, la última guardada en ese celular
+let asesoraFija = null;
+try {
+  const u = new URLSearchParams(location.search).get("asesora") || location.hash.slice(1);
+  if (u && ASESORAS[u.toLowerCase()]) asesoraFija = u.toLowerCase();
+} catch(e) {}
+try {
+  if (asesoraFija) localStorage.setItem("ppf-asesora", asesoraFija);
+  else { const g = localStorage.getItem("ppf-asesora"); if (g && ASESORAS[g]) asesoraFija = g; }
+} catch(e) {}
+
+const KEY = "ppf-carrito";
+let cart = {};   // "id|variante" -> cantidad
+let cat = "Todos";
+const sel = {};  // presentación elegida por producto
+const qsel = {}; // cantidad elegida en la tarjeta
+try { cart = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch(e) { cart = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch(e) {} };
+const find = id => PRODUCTOS.find(p => p.id === id);
+
+// ---- Categorías ----
+function renderCats(){
+  const extra = [...new Set(PRODUCTOS.map(p => p.c))].filter(c => !CATS_BASE.some(b => norm(b) === norm(c)));
+  const list = [...CATS_BASE, ...extra];
+  $("#cats").innerHTML = list.map(c => `<button class="catcard" type="button" data-c="${esc(c)}" aria-pressed="${norm(c)===norm(cat)}">${icono(c)}<span>${esc(c)}</span></button>`).join("")
+    + `<button class="catcard" type="button" data-c="Todos" aria-pressed="${cat==="Todos"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M14 6.5l5.5 5.5-5.5 5.5"/></svg><span>Ver todas las categorías</span></button>`;
+}
+$("#cats").addEventListener("click", e => {
+  const b = e.target.closest(".catcard"); if (!b) return;
+  cat = b.dataset.c; $("#q").value = "";
+  renderCats(); renderGrid();
+  $("#productos").scrollIntoView({behavior:"smooth", block:"start"});
+});
+$("#q").addEventListener("input", renderGrid);
+$("#searchForm").addEventListener("submit", e => { e.preventDefault(); renderGrid(); $("#productos").scrollIntoView({behavior:"smooth"}); });
+$("#goShop").addEventListener("click", e => { e.preventDefault(); $("#productos").scrollIntoView({behavior:"smooth"}); });
+
+// ---- Productos ----
+function renderGrid(){
+  const qt = $("#q").value.trim(), q = norm(qt);
+  const list = PRODUCTOS.filter(p => (cat==="Todos" || norm(p.c)===norm(cat)) && (!q || norm(p.n+" "+(p.d||"")+" "+p.c).includes(q)));
+  $("#secTitle").textContent = q ? `Resultados para “${qt}”` : cat==="Todos" ? "Todos los productos" : cat;
+  $("#secCount").textContent = list.length ? `${list.length} producto${list.length>1?"s":""}` : "";
+  $("#grid").innerHTML = list.length ? list.map(card).join("")
+    : `<p class="note">${q ? `No encontramos productos con “${esc(qt)}”. Prueba otra palabra o escríbenos por WhatsApp.` : "Pronto tendremos productos en esta categoría. Pregúntanos por WhatsApp."}</p>`;
+}
+function card(p){
+  const v = Math.min(sel[p.id] ?? 0, p.v.length-1);
+  const [pres, precio, agotado, antes] = p.v[v];
+  const q = qsel[p.id] || 1;
+  const foto = p.f ? `<img src="${esc(p.f)}" alt="${esc(p.n)}" loading="lazy">` : icono(p.c);
+  return `<article class="card" data-id="${esc(p.id)}">
+    <div class="ph">${foto}${p.b?`<span class="badge">${esc(p.b)}</span>`:""}${agotado?`<span class="badge out">Agotado</span>`:""}</div>
+    <div class="cb">
+      <h3>${esc(p.n)}</h3>
+      <div class="pres"><span>Presentación</span>${p.v.length>1
+        ? `<select aria-label="Presentación de ${esc(p.n)}">${p.v.map(([t],i)=>`<option value="${i}" ${i===v?"selected":""}>${esc(t)}</option>`).join("")}</select>`
+        : `<b>${esc(pres)}</b>`}</div>
+      <div class="price"><strong>${fmt(precio)}</strong>${antes?`<s>${fmt(antes)}</s>`:""}</div>
+      <div class="act">
+        <div class="qty"><button type="button" data-q="-" aria-label="Menos">−</button><output>${q}</output><button type="button" data-q="+" aria-label="Más">+</button></div>
+        <button class="addbtn" type="button" data-add ${agotado?"disabled":""} aria-label="Agregar ${esc(p.n)} al pedido">${CART_SVG}</button>
+      </div>
+    </div></article>`;
+}
+$("#grid").addEventListener("change", e => {
+  const c = e.target.closest(".card"); if (!c || e.target.tagName!=="SELECT") return;
+  sel[c.dataset.id] = +e.target.value; renderGrid();
+});
+$("#grid").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if (!c) return;
+  const id = c.dataset.id;
+  const qb = e.target.closest("[data-q]");
+  if (qb) { qsel[id] = Math.max(1, (qsel[id]||1) + (qb.dataset.q==="+"?1:-1)); c.querySelector(".qty output").textContent = qsel[id]; return; }
+  if (e.target.closest("[data-add]")) {
+    const p = find(id), v = Math.min(sel[id] ?? 0, p.v.length-1), n = qsel[id] || 1;
+    change(id+"|"+v, n); qsel[id] = 1; c.querySelector(".qty output").textContent = 1;
+    toast(`Agregado: ${n} × ${p.n} (${p.v[v][0]})`);
+  }
+});
+let tt;
+function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(tt); tt=setTimeout(()=>el.hidden=true, 2200); }
+
+// ---- Carrito ----
+$("#lines").addEventListener("click", e => {
+  const b = e.target.closest("[data-k]"); if (!b) return;
+  change(b.dataset.k, b.dataset.a==="+"?1:-1);
+});
+function change(k, d){
+  cart[k] = (cart[k]||0) + d;
+  if (cart[k] <= 0) delete cart[k];
+  save(); renderCart();
+}
+function items(){
+  return Object.entries(cart).map(([k,q]) => {
+    const [id,v] = k.split("|"); const p = find(id);
+    if (!p || !p.v[v]) return null;
+    return {k, p, pres:p.v[v][0], precio:p.v[v][1], q, sub:p.v[v][1]*q};
+  }).filter(Boolean);
+}
+$("#asesora").innerHTML = Object.entries(ASESORAS).map(([k,a]) => `<option value="${k}">${esc(a.nombre)}</option>`).join("") + `<option value="">Aún no tengo asesora</option>`;
+if (asesoraFija) {
+  $("#asesora").value = asesoraFija; $("#asesoraField").hidden = true;
+  $("#advisorTag").hidden = false; $("#advisorTag").textContent = "Te atiende " + ASESORAS[asesoraFija].nombre;
+} else $("#asesora").value = "";
+const asesora = () => ASESORAS[$("#asesora").value || ASESORA_GENERAL];
+$("#distritos").innerHTML = DISTRITOS.map(d => `<option value="${d}">`).join("");
+function delivery(){ // número, 0 (gratis) o null (por confirmar)
+  if ($("#entrega").value !== "Delivery") return 0;
+  const z = norm($("#zona").value); if (!z) return null;
+  const k = Object.keys(TARIFAS).find(d => norm(d) === z);
+  return k ? TARIFAS[k] : null;
+}
+const envioTxt = e => e === null ? "Por confirmar" : e ? fmt(e) : "Gratis";
+
+function renderCart(){
+  const it = items();
+  const sub = it.reduce((a,x)=>a+x.sub,0);
+  const envio = it.length ? delivery() : 0;
+  const n = it.reduce((a,x)=>a+x.q,0);
+  $("#lines").innerHTML = it.length ? it.map(x => `<div class="line">
+      ${x.p.f ? `<img class="thumb" src="${esc(x.p.f)}" alt="">` : `<span class="thumb"></span>`}
+      <div class="n">${esc(x.p.n)}<div class="v">${esc(x.pres)} · ${fmt(x.precio)}</div></div>
+      <div class="s">${fmt(x.sub)}</div>
+      <div class="qty"><button type="button" data-k="${esc(x.k)}" data-a="-" aria-label="Quitar uno">−</button><output>${x.q}</output><button type="button" data-k="${esc(x.k)}" data-a="+" aria-label="Agregar uno">+</button></div>
+    </div>`).join("") : `<p class="empty">Aún no agregas productos.<br>Elige del catálogo y aparecerán aquí.</p>`;
+  $("#totals").innerHTML = `<div><span>Subtotal</span><span>${fmt(sub)}</span></div>
+    <div><span>Delivery</span><span>${envioTxt(envio)}</span></div>
+    <div class="grand"><span>Total${envio===null?" + delivery":""}</span><span>${fmt(sub+(envio||0))}</span></div>`;
+  $("#count").textContent = n; $("#fabCount").textContent = n;
+  $("#fabTotal").textContent = fmt(sub+(envio||0));
+  $("#fab").classList.toggle("show", n > 0);
+  updateLink(it, sub, envio);
+}
+function updateLink(it, sub, envio){
+  const btn = $("#send"), err = $("#err");
+  let problema = "";
+  if (!it.length) problema = "";
+  else if (sub < PEDIDO_MINIMO) problema = `El pedido mínimo es ${fmt(PEDIDO_MINIMO)}. Te faltan ${fmt(PEDIDO_MINIMO-sub)}.`;
+  else if (!$("#nombre").value.trim()) problema = "Escribe tu nombre para enviar el pedido.";
+  else if ($("#entrega").value === "Delivery" && !$("#zona").value.trim()) problema = "Escribe tu distrito para el delivery.";
+  err.hidden = !problema; err.textContent = problema;
+  const ok = it.length && !problema;
+  btn.setAttribute("aria-disabled", !ok);
+  $("#hint").textContent = `Se abre el WhatsApp de ${asesora().nombre} con tu pedido escrito. Solo presiona enviar.`;
+  if (!ok) { btn.href = "#"; return; }
+  const rec = $("#entrega").value !== "Delivery";
+  const f = $("#fecha").value ? new Date($("#fecha").value+"T12:00").toLocaleDateString("es-PE",{weekday:"long",day:"numeric",month:"long"}) : "Por coordinar";
+  const msg = [
+    `Hola ${$("#asesora").value ? asesora().nombre : "Perú Pacific Food"}, quiero hacer este pedido:`, "",
+    ...it.map(x => `• ${x.q} × ${x.p.n} (${x.pres}) — ${fmt(x.sub)}`), "",
+    `Subtotal: ${fmt(sub)}`, `Delivery: ${envioTxt(envio)}`, `*TOTAL: ${fmt(sub+(envio||0))}${envio===null?" + delivery":""}*`, "",
+    `Nombre: ${$("#nombre").value.trim()}`, rec ? "Entrega: Recojo en almacén" : `Distrito: ${$("#zona").value.trim()}`,
+    ($("#direccion").value.trim() || null) && `Dirección: ${$("#direccion").value.trim()}`,
+    `Fecha: ${f}`, `Pago: ${$("#pago").value}`,
+    ($("#nota").value.trim() || null) && `Comentarios: ${$("#nota").value.trim()}`,
+  ].filter(l => l !== null).join("\n");
+  btn.href = `https://wa.me/${asesora().tel}?text=${encodeURIComponent(msg)}`;
+}
+["asesora","nombre","zona","entrega","fecha","direccion","pago","nota"].forEach(id => { $("#"+id).addEventListener("input", renderCart); $("#"+id).addEventListener("change", renderCart); });
+
+const openCart = o => { $("#cart").classList.toggle("open", o); $("#scrim").hidden = !o; };
+$("#openCart").onclick = () => openCart(true);
+$("#fab").onclick = () => openCart(true);
+$("#closeCart").onclick = () => openCart(false);
+$("#scrim").onclick = () => openCart(false);
+document.addEventListener("keydown", e => { if (e.key === "Escape") openCart(false); });
+
+// ---- Carga de precios desde Google Sheets ----
+function parseCSV(t){
+  const rows=[]; let r=[], f="", q=false;
+  for (let i=0;i<t.length;i++){ const c=t[i];
+    if (q){ if (c=='"'){ if (t[i+1]=='"'){ f+='"'; i++; } else q=false; } else f+=c; }
+    else if (c=='"') q=true; else if (c==','){ r.push(f); f=""; }
+    else if (c=='\n'){ r.push(f); rows.push(r); r=[]; f=""; } else if (c!='\r') f+=c; }
+  if (f||r.length){ r.push(f); rows.push(r); }
+  return rows;
+}
+const num = t => { const x = parseFloat(String(t).replace(/[^\d.,]/g,"").replace(",",".")); return isNaN(x) ? null : x; };
+function desdeHoja(csv){
+  const [head, ...rows] = parseCSV(csv);
+  const h = head.map(x => norm(x));
+  const col = k => h.indexOf(k);
+  const need = ["id","producto","presentacion","precio"];
+  if (need.some(k => col(k) < 0)) throw new Error("Faltan columnas: " + need.filter(k=>col(k)<0).join(", "));
+  const g = new Map();
+  for (const r of rows){
+    const get = k => col(k) >= 0 ? (r[col(k)]||"").trim() : "";
+    const id = get("id"), precio = num(get("precio"));
+    if (!id || !get("producto") || precio === null) continue;
+    if (norm(get("mostrar")) === "no") continue;
+    if (!g.has(id)) g.set(id, {id, n:get("producto"), c:get("categoria")||"Otros", d:get("descripcion"), f:get("foto"), v:[], b:get("etiqueta")});
+    g.get(id).v.push([get("presentacion")||"Unidad", precio, norm(get("disponible")) === "no", num(get("precio anterior"))]);
+  }
+  if (!g.size) throw new Error("La hoja no tiene productos válidos");
+  return [...g.values()];
+}
+function limpiarCarrito(){
+  for (const k of Object.keys(cart)){ const [id,v]=k.split("|"); const p=find(id); if (!p || !p.v[v] || p.v[v][2]) delete cart[k]; }
+  save();
+}
+function pintar(){ renderCats(); renderGrid(); renderCart(); }
+
+if (SHEET_CSV_URL) {
+  renderCats(); $("#grid").innerHTML = `<p class="note">Cargando precios actualizados…</p>`;
+  fetch(SHEET_CSV_URL + (SHEET_CSV_URL.includes("?")?"&":"?") + "t=" + Date.now())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(t => { PRODUCTOS = desdeHoja(t); })
+    .catch(e => console.warn("No se pudo leer la hoja, se usan precios de respaldo:", e))
+    .finally(() => { limpiarCarrito(); pintar(); });
+} else { limpiarCarrito(); pintar(); }
+</script>
+
+</body>
+</html>
